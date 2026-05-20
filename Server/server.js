@@ -1,18 +1,23 @@
 import cors from "cors";
 import express, { json } from "express";
-import dotenv from 'dotenv/config.js'
+import "dotenv/config"
 import DataBaseConnection from "./DataBase/db.js";
 import router from "./Router/auth.js";
 
 const app = express();
 app.use(cors())
-app.use(json())
+app.use(express.json())
 
 DataBaseConnection()
 
-router.get('/api',router)
+app.use('/api',router)
+
+app.get("/", (req, res) => {
+    res.send("server is running")
+})
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
     console.log(`Server Running on ${PORT}`)
 })
