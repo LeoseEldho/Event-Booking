@@ -22,4 +22,4 @@ const otpSchema = new mongoose.Schema({
 
 const OTP = await mongoose.model("OTP", otpSchema);
 
-export default otpSchema;
+export default OTP;

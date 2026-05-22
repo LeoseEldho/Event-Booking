@@ -1,9 +1,8 @@
-const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
 
-dotenv.config();
+import nodemailer from 'nodemailer'
+import 'dotenv/config'
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
@@ -11,7 +10,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const sendBookingEmail = async (userEmail, userName, eventTitle) => {
+export const sendBookingEmail = async (userEmail, userName, eventTitle) => {
     try {
         const mailOptions = {
             from: process.env.EMAIL_USER,
@@ -30,10 +29,10 @@ const sendBookingEmail = async (userEmail, userName, eventTitle) => {
     }
 };
 
-const sendOTPEmail = async (userEmail, otp, type) => {
+export const sendOTPEmail = async (userEmail, otp, type) => {
     try {
-        const title = type === 'account_verification' ? 'Verify your Eventora Account' : 'Eventora Booking Verification';
-        const msg = type === 'account_verification'
+        const title = type === 'account_verify' ? 'Verify your Eventora Account' : 'Eventora Booking Verification';
+        const msg = type === 'account_verify'
             ? 'Please use the following OTP to verify your new Eventora account.'
             : 'Please use the following OTP to verify and confirm your event booking.';
 
@@ -58,5 +57,3 @@ const sendOTPEmail = async (userEmail, otp, type) => {
         console.error('Error sending OTP email:', error);
     }
 };
-
-module.exports = { sendBookingEmail, sendOTPEmail };
