@@ -4,6 +4,10 @@ import bcrypt from "bcryptjs";
 import { sendOTPEmail } from "../Utils/email.js";
 import jwt from "jsonwebtoken";
 
+const generateToken = (id, role) => {
+  return jwt.sign({ id, role }, process.env.JWT_TOKEN, { expiresIn: "7d" });
+};
+
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -73,17 +77,9 @@ export const loginUser = async (req, res) => {
         .status(200)
         .json({ message: "Account has not verified!. New OTP Has Been Sent" });
     }
-    const token = await jwt.sign(
-      {
-        email: user.email,
-        isVerified: user.isVerified,
-        role: user.role,
-        user_id: user.id,
-      },
-      process.env.JWT_TOKEN,
-      { expiresIn: "7d" },
-    );
-    res.status(200).json({ success: true, message: "Login Successfully" });
+    const token = generateToken(user._id, user.role);
+    
+    res.status(200).json({ success: true, message: "Login Successfully" ,token:token});
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -110,7 +106,14 @@ export const verifyUser = async (req, res) => {
     await User.findOneAndUpdate({ email }, { isVerified: true });
     await OTP.deleteMany({ email, action: "account_verify" });
 
-    res.status(200).json({ message: "Account Verified Successfully " });
+    res.status(200).json({
+      message: "Account Verified Successfully. You can login now",
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      id: user.id,
+      token: generateToken(user.id,user.role),
+    });
   } catch (error) {
     res.status(500).json({ succes: false, error: error.message });
   }
