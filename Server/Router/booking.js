@@ -1,6 +1,6 @@
 import express from "express";
-import { authMiddleware, adminMiddleware } from "../Middleware/auth";
-import { bookEvent,cancelBooking,conformBooking,getMyBooking,sendBookingOTP } from "../Controller/bookingController";
+import { authMiddleware, adminMiddleware } from "../Middleware/auth.js";
+import { bookEvent,cancelBooking,conformBooking,getMyBooking,sendBookingOTP } from "../Controller/bookingController.js";
 
 const router = express.Router();
 
