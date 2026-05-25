@@ -27,9 +27,22 @@ const eventMongoose = new mongoose.Schema({
     },
     availableseats: {
         type: String,
+        required: true
+    },
+    ticketPrice: {
+        type: Number,
+        required:true
+    },
+    imageUrl: {
+        type: String,
+        required:true
+    },
+    createdBt: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required:true
     }
-});
+},{timestamps:true});
 
 const Event = mongoose.model("Event", eventMongoose);
 

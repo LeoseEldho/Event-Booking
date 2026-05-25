@@ -25,14 +25,16 @@ export const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    const user = new User.create({
+    const user =await User.create({
       name,
       email,
       password: hash,
       role: "user",
       isVerified: false,
     });
-    const otp = Math.floor(100000 + Math.round() * 900000).toString();
+
+
+    const otp = Math.floor(100000 + Math.rondom() * 900000).toString();
     await OTP.create({ email, otp, action: "account_verify" });
     await sendOTPEmail(email, otp, "account_verify");
 
@@ -78,8 +80,10 @@ export const loginUser = async (req, res) => {
         .json({ message: "Account has not verified!. New OTP Has Been Sent" });
     }
     const token = generateToken(user._id, user.role);
-    
-    res.status(200).json({ success: true, message: "Login Successfully" ,token:token});
+
+    res
+      .status(200)
+      .json({ success: true, message: "Login Successfully", token: token });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -112,7 +116,7 @@ export const verifyUser = async (req, res) => {
       email: user.email,
       role: user.role,
       id: user.id,
-      token: generateToken(user.id,user.role),
+      token: generateToken(user.id, user.role),
     });
   } catch (error) {
     res.status(500).json({ succes: false, error: error.message });
