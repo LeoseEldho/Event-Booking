@@ -11,16 +11,16 @@ export const sendBookingOTP = async (req, res) => {
   try {
     const otp = generateOTP();
     await OTP.findOneAndDelete({
-      email: req.body.email,
+      email: req.UserId.email,
       action: "event_booking",
     });
     await OTP.create({
-      email: req.body.email,
+      email: req.UserId.email,
       otp: otp,
       action: "event_booking",
     });
     await sendBookingEmail({
-      email: req.body.email,
+      email: req.UserId.email,
       otp: otp,
       action: "event_booking",
     });
@@ -35,7 +35,7 @@ export const bookEvent = async (req, res) => {
   try {
     const { eventId, otp } = req.body;
     const eventRecord = await OTP.findOne({
-      email: req.body.email,
+      email: req.UserId.email,
       otp,
       action: "event_booking",
     });
@@ -48,12 +48,13 @@ export const bookEvent = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Event not found!" });
     }
+    
     if (event.totalseats <= 0) {
       return res
         .status(400)
         .json({ success: false, message: "No seats available" });
     }
-    const existingbooking = await Booking.findOne({ email: req.body.email });
+    const existingbooking = await Booking.findOne({ email: req.UserId.email });
     if (existingbooking) {
       return res
         .status(400)
@@ -67,6 +68,7 @@ export const bookEvent = async (req, res) => {
       status:"pending"
     });
       
+      await Booking.deleteMany({email:req.UserId.email})
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
